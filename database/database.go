@@ -2,17 +2,18 @@ package database
 
 import (
 	"database/sql"
+	"os"
 
 	"github.com/go-sql-driver/mysql"
 )
 
 func Connect() *sql.DB {
 	cfg := mysql.Config{
-		User:   "root",
-		Passwd: "mysql",
-		Net:    "tcp",
-		Addr:   "127.0.0.1:3306",
-		DBName: "luxcare_demo",
+		User:   os.Getenv("MYSQL_USER"),
+		Passwd: os.Getenv("MYSQL_PASSWORD"),
+		Net:    os.Getenv("MYSQL_NET"),
+		Addr:   os.Getenv("MYSQL_ADDR"),
+		DBName: os.Getenv("MYSQL_DBNAME"),
 	}
 	db, err := sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
