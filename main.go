@@ -2,12 +2,10 @@ package main
 
 import (
 	"fmt"
+	"luxcare/contact"
+	"luxcare/database"
 	"net/http"
 )
-
-func hello(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintln(w, "Hello!!")
-}
 
 func headers(w http.ResponseWriter, req *http.Request) {
 	for name, headers := range req.Header {
@@ -18,7 +16,17 @@ func headers(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/hello", hello)
+	db := database.Connect()
+	_, table_check := db.Query("select Count(*) from contacts;")
+
+	if table_check == nil {
+		fmt.Println("table is there, nothing to do.")
+	} else {
+		fmt.Println("table not there, creating table")
+		database.GenerateMigrations()
+	}
+	http.HandleFunc("/hello", contact.Hello)
+	http.HandleFunc("/create-contact", contact.Create)
 	http.HandleFunc("/headers", headers)
 
 	http.ListenAndServe(":3000", nil)
